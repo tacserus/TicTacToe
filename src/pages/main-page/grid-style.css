@@ -1,0 +1,31 @@
+.game_container {
+    width: 300px;
+    height: 300px;
+    position: relative;
+
+}
+
+.grid_animation {
+    position: absolute;
+}
+
+.grid_container {
+    position: absolute;
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(3, 90px);
+    padding: 10px;
+    margin-top: 13px;
+    margin-left: 4px;
+}
+
+.grid_container > div {
+    position: relative;
+    width: 85px;
+    height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
