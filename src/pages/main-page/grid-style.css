@@ -1,31 +1,62 @@
-.game_container {
-    width: 300px;
-    height: 300px;
-    position: relative;
+.main_page_container {
+  display: flex;
+  font-size: 18px;
+  flex-direction: column;
+  gap: 10px;
+}
 
+.game_container {
+  width: 300px;
+  height: 300px;
+  position: relative;
 }
 
 .grid_animation {
-    position: absolute;
+  position: absolute;
 }
 
 .grid_container {
-    position: absolute;
-    display: grid;
-    justify-content: center;
-    grid-template-columns: repeat(3, 90px);
-    padding: 10px;
-    margin-top: 13px;
-    margin-left: 4px;
+  position: absolute;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(3, 90px);
+  padding: 10px;
+  margin-top: 13px;
+  margin-left: 4px;
 }
 
 .grid_container > div {
-    position: relative;
-    width: 85px;
-    height: 85px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: relative;
+  width: 85px;
+  height: 85px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.main_page_change_type_block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
+@keyframes win_blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.win_cell {
+  animation: win_blink 1s infinite;
+}
+
+.simple_cell {
+  animation: win_blink 1s infinite;
+  animation-delay: 1s;
+}

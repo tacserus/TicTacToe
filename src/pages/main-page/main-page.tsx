@@ -1,182 +1,223 @@
-import {useEffect, useState} from "react";
-import {CellType} from "./cell-type.ts";
-import {GridAnimation} from "../../animations/grid-animation.tsx";
-import CrossAnimation from "../../animations/cross-animation.tsx";
-import OvalAnimation from "../../animations/oval-animation.tsx";
-import {winCombinations} from "./win-combinations.ts";
-import {FirstTurn} from "./first-turn.ts";
+import React from "react";
+import { useEffect, useState } from "react";
+import { CellType } from "./cell-type.ts";
+import { GridAnimation } from "../../animations/grid-animation.tsx";
+import { CrossAnimation } from "../../animations/cross-animation.tsx";
+import { OvalAnimation } from "../../animations/oval-animation.tsx";
+import { GameAnimation } from "../../animations/game-animation.tsx";
 
-export default function MainPage() {
-    const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
-    const [playerCellType, setPlayerCellType] = useState<CellType>(CellType.CROSS);
-    const computerCellType = playerCellType === CellType.CROSS ? CellType.OVAL : CellType.CROSS;
+type MainPageProps = {
+  winCombinations: number[][];
+  computerMoveTimeout: number;
+  animationTimeout: number;
+  gameFieldSize: number;
+};
 
-    const gameFieldSize = 9;
-    const [gameFieldData, setGameFieldData] = useState<CellType[]>(Array(gameFieldSize).fill(CellType.DEFAULT));
+export default function MainPage({
+  winCombinations,
+  computerMoveTimeout,
+  animationTimeout,
+  gameFieldSize,
+}: MainPageProps) {
+  const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
 
-    const [firstTurn, setFirstTurn] = useState<FirstTurn>(FirstTurn.RANDOM)
+  const [playerCellType, setPlayerCellType] = useState<CellType>(
+    CellType.CROSS,
+  );
+  const computerCellType =
+    playerCellType === CellType.CROSS ? CellType.OVAL : CellType.CROSS;
 
-    const getInitialPlayerTurn = (turn: FirstTurn): boolean => {
-        switch (turn) {
-            case FirstTurn.COMPUTER:
-                return false;
-            case FirstTurn.PLAYER:
-                return true;
-            default:
-                return Math.random() < 0.5;
-        }
-    };
+  const [isAnimationPlaying, setIsAnimationPlaying] = useState<boolean>(false);
+  const [isPlayerTurn, setIsPlayerTurn] = useState<boolean>(true);
 
-    const [isPlayerTurn, setIsPlayerTurn] = useState<boolean>(getInitialPlayerTurn(firstTurn));
+  const [gameFieldData, setGameFieldData] = useState<CellType[]>(
+    Array(gameFieldSize).fill(CellType.DEFAULT),
+  );
+  const [winningCombination, setWinningCombination] = useState<number[]>([]);
 
-    useEffect(() => {
-        if (!isPlayerTurn && isGameStarted) {
-            const timeoutId = setTimeout(() => {
-                computerMove();
-            }, 1000);
+  useEffect(() => {
+    if (isGameStarted && !isPlayerTurn && !isAnimationPlaying) {
+      const timeoutId = setTimeout(() => {
+        computerMove();
+      }, computerMoveTimeout);
 
-            return () => clearTimeout(timeoutId);
-        }
-    }, [isPlayerTurn, isGameStarted]);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isPlayerTurn, isGameStarted, isAnimationPlaying]);
 
-    const onStartClicked = () => {
-        setIsGameStarted(true);
-    };
+  useEffect(() => {
+    if (isGameStarted) {
+      checkWinCombination();
+    }
+  }, [isGameStarted, isPlayerTurn]);
 
-    const onRestartClicked = () => {
-        const initialTurn = getInitialPlayerTurn(firstTurn);
-        setIsPlayerTurn(initialTurn);
-        setGameFieldData(Array(gameFieldSize).fill(CellType.DEFAULT));
-    };
+  const computerMove = () => {
+    const availableCells = gameFieldData
+      .map((cell, index) => (cell === CellType.DEFAULT ? index : null))
+      .filter((index) => index !== null);
 
-    const checkWinCombination = (newGameFieldData) => {
-        for (const winCombination of winCombinations) {
-            const [a, b, c] = winCombination;
+    if (availableCells.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableCells.length);
+      const cellToPlay = availableCells[randomIndex];
 
-            if (newGameFieldData[a] === CellType.DEFAULT || newGameFieldData[b] === CellType.DEFAULT || newGameFieldData[c] === CellType.DEFAULT) {
-                continue;
-            }
+      const newGameFieldData = [...gameFieldData];
+      newGameFieldData[cellToPlay] = computerCellType;
+      setGameFieldData(newGameFieldData);
 
-            if (newGameFieldData[a] === newGameFieldData[b] && newGameFieldData[a] === newGameFieldData[c]) {
-                console.log(isPlayerTurn ? "player won" : "computer won");
-                onRestartClicked();
-                break;
-            }
-        }
-    };
+      setIsPlayerTurn(true);
+    }
+  };
 
-    const generateFieldUI = () => {
-        return (
-            <div className="grid_container">
-                {gameFieldData.map((cellType, index) => {
-                    let element;
+  const checkWinCombination = () => {
+    for (const winCombination of winCombinations) {
+      const [firstCellIndex, secondCellIndex, thirdCellIndex] = winCombination;
 
-                    switch (cellType) {
-                        case CellType.CROSS:
-                            element = <CrossAnimation/>;
-                            break;
-                        case CellType.OVAL:
-                            element = <OvalAnimation/>;
-                            break;
-                        default:
-                            element = <div></div>;
-                            break;
-                    }
+      if (
+        gameFieldData[firstCellIndex] === CellType.DEFAULT ||
+        gameFieldData[secondCellIndex] === CellType.DEFAULT ||
+        gameFieldData[thirdCellIndex] === CellType.DEFAULT
+      ) {
+        continue;
+      }
 
-                    return (
-                        <div key={index} onClick={() => onCellClicked(index)}>
-                            {element}
-                        </div>
-                    );
-                })}
-            </div>
+      if (
+        gameFieldData[firstCellIndex] === gameFieldData[secondCellIndex] &&
+        gameFieldData[firstCellIndex] === gameFieldData[thirdCellIndex]
+      ) {
+        setIsAnimationPlaying(true);
+
+        setTimeout(() => {
+          setWinningCombination([
+            firstCellIndex,
+            secondCellIndex,
+            thirdCellIndex,
+          ]);
+        }, animationTimeout / 3);
+
+        setTimeout(
+          () => {
+            handleRestartClicked();
+            setIsAnimationPlaying(false);
+          },
+          animationTimeout + animationTimeout / 3,
         );
-    };
+        return;
+      }
+    }
 
-    const onCellClicked = (cellIndex: number) => {
-        if (isGameStarted && isPlayerTurn && gameFieldData[cellIndex] === CellType.DEFAULT) {
-            const newGameFieldData = [...gameFieldData];
-            newGameFieldData[cellIndex] = playerCellType;
-            setGameFieldData(newGameFieldData);
-            checkWinCombination(newGameFieldData);
+    if (!gameFieldData.filter((cell) => cell === CellType.DEFAULT).length) {
+      setIsAnimationPlaying(true);
 
-            setIsPlayerTurn(false)
-        }
-    };
+      setTimeout(() => {
+        setWinningCombination([...Array(9).keys()]);
+      }, animationTimeout / 3);
 
-    const computerMove = () => {
-        const availableCells = gameFieldData.map((cell, index) => cell === CellType.DEFAULT ? index : null).filter(index => index !== null);
+      setTimeout(
+        () => {
+          handleRestartClicked();
+          setIsAnimationPlaying(false);
+        },
+        animationTimeout + animationTimeout / 3,
+      );
+    }
+  };
 
-        if (availableCells.length > 0) {
-            const randomIndex = Math.floor(Math.random() * availableCells.length);
-            const cellToPlay = availableCells[randomIndex];
+  const handleStartClicked = () => {
+    setIsGameStarted(true);
+  };
 
-            const newGameFieldData = [...gameFieldData];
-            newGameFieldData[cellToPlay] = computerCellType;
-            setGameFieldData(newGameFieldData);
+  const handleRestartClicked = () => {
+    setWinningCombination([]);
+    setIsPlayerTurn(true);
+    setGameFieldData(Array(gameFieldSize).fill(CellType.DEFAULT));
+  };
 
-            checkWinCombination(newGameFieldData);
-            setIsPlayerTurn(true);
-        }
-    };
+  const handleCellClicked = (cellIndex: number) => {
+    if (
+      isGameStarted &&
+      isPlayerTurn &&
+      !isAnimationPlaying &&
+      gameFieldData[cellIndex] === CellType.DEFAULT
+    ) {
+      const newGameFieldData = [...gameFieldData];
+      newGameFieldData[cellIndex] = playerCellType;
+      setGameFieldData(newGameFieldData);
 
-    const onCellTypeChangeClicked = () => {
-        setPlayerCellType(prev => (prev === CellType.CROSS ? CellType.OVAL : CellType.CROSS));
-        onRestartClicked();
-    };
+      setIsPlayerTurn(false);
+    }
+  };
 
-    const onFirstTurnChangeClicked = () => {
-        switch (firstTurn) {
-            case FirstTurn.COMPUTER:
-                setFirstTurn(FirstTurn.RANDOM);
-                break;
-            case FirstTurn.PLAYER:
-                setFirstTurn(FirstTurn.COMPUTER);
-                break;
-            case FirstTurn.RANDOM:
-                setFirstTurn(FirstTurn.PLAYER);
-                break;
-        }
-    };
-
-    return (
-        <div className="main_page_container">
-            {isGameStarted && (
-                <div className="game_container">
-                    <GridAnimation/>
-                    {generateFieldUI()}
-                </div>
-            )}
-            <button type="button" onClick={isGameStarted ? onRestartClicked : onStartClicked}>
-                {isGameStarted ? "Restart game" : "Start game"}
-            </button>
-
-            {isGameStarted && (
-                <div>
-                    <button type="button" onClick={() => {
-                        onCellTypeChangeClicked()
-                        onRestartClicked();
-                    }}>
-                        Switch cell type
-                    </button>
-                    <div>
-                        Current cell type: {playerCellType}
-                    </div>
-                </div>
-            )}
-            {isGameStarted && (
-                <div>
-                    <button type="button" onClick={() => {
-                        onFirstTurnChangeClicked()
-                        onRestartClicked();
-                    }}>
-                        Switch first turn
-                    </button>
-                    <div>
-                        Current first turn: {firstTurn}
-                    </div>
-                </div>
-            )}
-        </div>
+  const handleCellTypeChangeClicked = () => {
+    setPlayerCellType((prev) =>
+      prev === CellType.CROSS ? CellType.OVAL : CellType.CROSS,
     );
+    handleRestartClicked();
+  };
+
+  return (
+    <div className="main_page_container">
+      <div className="main_page_title">Tic-Tac-Toe!</div>
+      {!isGameStarted && <GameAnimation />}
+      {isGameStarted && (
+        <div className="game_container">
+          <GridAnimation />
+          <div className="grid_container">
+            {gameFieldData.map((cellType, index) => {
+              let element;
+
+              switch (cellType) {
+                case CellType.CROSS:
+                  element = <CrossAnimation />;
+                  break;
+                case CellType.OVAL:
+                  element = <OvalAnimation />;
+                  break;
+                default:
+                  element = <div></div>;
+                  break;
+              }
+
+              return (
+                <div
+                  key={index}
+                  onClick={() => handleCellClicked(index)}
+                  className={
+                    winningCombination.length > 0
+                      ? winningCombination.includes(index)
+                        ? "win_cell"
+                        : "simple_cell"
+                      : "game_cell"
+                  }
+                >
+                  {element}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      <button
+        className="main_page_restart_button"
+        type="button"
+        onClick={isGameStarted ? handleRestartClicked : handleStartClicked}
+      >
+        {isGameStarted ? "Restart game" : "Start game"}
+      </button>
+
+      {isGameStarted && (
+        <div className="main_page_change_type_block">
+          <button
+            className="main_page_change_type_button"
+            type="button"
+            onClick={() => handleCellTypeChangeClicked()}
+          >
+            Switch cell type
+          </button>
+          <div className="main_page_change_type_description">
+            Current cell type: {playerCellType}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }

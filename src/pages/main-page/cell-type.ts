@@ -1,5 +1,5 @@
 export enum CellType {
-    DEFAULT = 'empty',
-    CROSS = 'cross',
-    OVAL = 'oval'
+  DEFAULT = "empty",
+  CROSS = "cross",
+  OVAL = "oval",
 }

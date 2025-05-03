@@ -1,6 +1,6 @@
 enum AppRouter {
-    Main = '/',
-    Undefined = '*'
+  Main = "/",
+  Undefined = "*",
 }
 
 export default AppRouter;

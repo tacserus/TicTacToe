@@ -1,26 +1,28 @@
 import React from "react";
-import cross from "../assets/cross.json";
+import game from "../assets/game.json";
 import Lottie from "react-lottie";
+import { GridAnimation } from "./grid-animation.tsx";
 
-export const CrossAnimation = () => {
+export function GameAnimation() {
   const defaultOptions = {
-    loop: false,
+    loop: true,
     autoplay: true,
-    animationData: cross,
+    animationData: game,
     rendererSettings: {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
 
   return (
-    <div className="cross_animation">
+    <div className="game_animation">
+      <GridAnimation />
       <Lottie
         options={defaultOptions}
         isClickToPauseDisabled={true}
-        height={60}
-        width={60}
-        speed={0.5}
+        height={300}
+        width={300}
+        speed={1.5}
       />
     </div>
   );
-};
+}
