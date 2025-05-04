@@ -1,54 +1,51 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project was created as a test assignment.
 
-Currently, two official plugins are available:
+▎Technologies Used
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+• Vite + React + TypeScript
 
-## Expanding the ESLint configuration
+• react-router-dom
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+• react-lottie
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+▎Pages
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The project features a Single Page Application (SPA) structure with the following three pages:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. MainPage: The landing page that opens when you navigate to the website.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+2. GamePage: The page that opens when the game starts.
+
+3. UndefinedPage: The page that appears when navigating to an unknown route within the web application.
+
+▎Game Details
+
+On the GamePage, you can play a game of Tic-Tac-Toe. Here are some key features:
+
+• The player always starts the game and can choose the type of cell using a special button.
+
+• The player has the option to restart the game at any time by clicking the restart button.
+
+• The game is played against a simple computer opponent.
+
+• Upon winning, the winning combination flashes once before disappearing along with the other cells.
+
+• In case of a draw, all cells will flash simultaneously.
+
+▎Getting Started
+
+To run the project, follow these steps:
+
+1. Navigate to your project directory:
+   ```bash
+   cd path/to/your/project
+   ```
+2. Install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
