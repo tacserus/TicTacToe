@@ -1,0 +1,12 @@
+.undefined_page_container {
+    display: inline-block;
+    font-size: 34px;
+    animation: scale 6s ease-in-out infinite;
+}
+
+.undefined_page_message_advice {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
