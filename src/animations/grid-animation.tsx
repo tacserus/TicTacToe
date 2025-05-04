@@ -1,5 +1,6 @@
-import grid from '../assets/grid.json';
+import grid from "../assets/grid.json";
 import Lottie from "react-lottie";
+import React from "react";
 
 export function GridAnimation() {
     const defaultOptions = {
@@ -7,7 +8,7 @@ export function GridAnimation() {
         autoplay: true,
         animationData: grid,
         rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
+            preserveAspectRatio: "xMidYMid slice",
         },
     };
 
@@ -15,6 +16,7 @@ export function GridAnimation() {
         <div className="grid_animation">
             <Lottie
                 options={defaultOptions}
+                isClickToPauseDisabled={true}
                 height={300}
                 width={300}
                 speed={0.5}

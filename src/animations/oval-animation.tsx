@@ -1,20 +1,22 @@
-import oval from '../assets/oval.json';
+import oval from "../assets/oval.json";
 import Lottie from "react-lottie";
+import React from "react";
 
-const OvalAnimation = () => {
+export const OvalAnimation = () => {
     const defaultOptions = {
         loop: false,
         autoplay: true,
         animationData: oval,
         rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
+            preserveAspectRatio: "xMidYMid slice",
         },
     };
 
     return (
-        <div className="grid_animation">
+        <div className="oval_animation">
             <Lottie
                 options={defaultOptions}
+                isClickToPauseDisabled={true}
                 height={60}
                 width={60}
                 speed={0.5}
@@ -22,5 +24,3 @@ const OvalAnimation = () => {
         </div>
     );
 };
-
-export default OvalAnimation;

@@ -1,0 +1,54 @@
+.game-page-container {
+    display: flex;
+    font-size: 20px;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.game_page_change_type_block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.game_page_content {
+    width: 300px;
+    height: 300px;
+    position: relative;
+}
+
+.grid_animation {
+    position: absolute;
+}
+
+.game_page__grid_container {
+    position: absolute;
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(3, 90px);
+    padding: 10px;
+    margin-top: 13px;
+    margin-left: 4px;
+}
+
+.game_page__grid_container > div {
+    position: relative;
+    width: 85px;
+    height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game_page_change_type_description {
+    margin-top: 5px;
+}
+
+.game_page__win_cell {
+    animation: win_blink 1s infinite;
+}
+
+.game_page__other_cell {
+    animation: win_blink 1s infinite;
+    animation-delay: 1s;
+}
